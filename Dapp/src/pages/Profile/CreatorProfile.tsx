@@ -235,7 +235,7 @@ const CreatorProfile = ({
                   disabled={creatorProfileExists}
                   href="/creatorProfile"
                   onClick={submitProfile}
-                  className="w-full text-white bg-triklBlue rounded-full py-2 disabled:bg-transparent disabled:text-lightAccent/50"
+                  className="w-full text-white bg-triklBlue rounded-full py-2 disabled:bg-transparent disabled:text-lightAccent/50 mt-5 mb-20"
                 >
                   <span className="text-xs capitalize">
                     {creatorProfileExists
