@@ -6,9 +6,13 @@ import {
   IonIcon,
   IonImg,
   IonItem,
+  IonList,
+  IonListHeader,
+  IonModal,
   IonPage,
   IonTitle,
   useIonAlert,
+  useIonPopover,
 } from "@ionic/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import axios from "axios";
@@ -31,39 +35,6 @@ const EachBlogCard: React.FC = () => {
       })
       .catch((error) => console.log(error));
   }, []);
-
-  // const [blogTitleDB, setBlogTitleDB] = useState<string>("");
-  // const [blogImgDB, setBlogImgDB] = useState<string>("");
-  // const [blogContentDB, setBlogContentDB] = useState<string>("");
-
-  // const [accountaddress, setAccountAddress] = useState<string>("");
-  // const [nameFromDatabase, setNameFromDatabase] = useState<string>("");
-  // const [aboutFromDatabase, setAboutFromDatabase] = useState<string>("");
-  // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  // const [isProfileAvailable, setIsProfileAvailable] = useState<boolean>(false);
-
-  // const getBlogInfo = async (addressParam: any) => {
-  //   await axios
-  //     .post("http://localhost:4000/api/creators//getblogs", {
-  //       blogCID: addressParam,
-  //     })
-  //     .then((res) => {
-  //       setNameFromDatabase(res.data.name);
-  //       setAboutFromDatabase(res.data.about);
-  //       setIsProfileAvailable(true);
-  //     })
-  //     .catch((err) => {
-  //       setIsProfileAvailable(false);
-  //       console.log("some error occured > ", err);
-  //     });
-  // };
-
-  // const getPostContent = (inputUrl: string) => {
-  //   axios.get(inputUrl).then((res) => {
-  //     console.log(res);
-  //     return res;
-  //   });
-  // };
 
   return (
     <IonPage>
@@ -101,8 +72,8 @@ const EachBlogCard: React.FC = () => {
                     </div>
                     <div className="text-left px-3">
                       <h3 className="text-sm font-semibold">
-                        {card.author.name.slice(0, 15)}
-                        {card.author.name.length > 15 ? "..." : ""}
+                        {card.author.name.slice(0, 10)}
+                        {card.author.name.length > 10 ? "..." : ""}
                       </h3>
                       <p className="text-triklGray">
                         {card.author.walletAddress.slice(0, 5)}...
@@ -134,28 +105,15 @@ const EachBlogCard: React.FC = () => {
 export default EachBlogCard;
 
 const EngageMenu: React.FC = () => {
-  const modal = useRef<HTMLIonModalElement>(null);
-  const input = useRef<HTMLIonInputElement>(null);
   const [isLiked, setIsLiked] = useState(false);
 
   const [presentAlert] = useIonAlert();
-  const address = process.env.REACT_APP_CONTRACT;
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //const provider = process.env.REACT_APP_AURORA_URL;
   const Trikl = new ethers.Contract(
-    "0x8a16ecb5128d30ec56c74bd0f5f75ffdb49391cb",
+    "0x120D092B5B24aE6c1C661b888715f1d62a63B8f0",
     abi,
     provider.getSigner()
   );
-
-  // console.log(
-  //   "address --->",
-  //   address,
-  //   "abi --->",
-  //   abi,
-  //   "provider --->",
-  //   provider
-  // );
 
   const handleClick = () => {
     axios
@@ -189,10 +147,18 @@ const EngageMenu: React.FC = () => {
   };
 
   const handleTip = async () => {
-    const num = 100000000000000;
-    await Trikl.tip("0xf3fb3cb8b34f5331b82219183c5adef40ee10ba5", {
-      value: num,
+    const num = 10000000;
+
+    presentAlert({
+      header: "Sorry! 🙇🏻",
+      subHeader: "error.response.data.error",
+      message: "You already earned your reward for the liking this post 🥳",
+      buttons: ["OK", "Cancel"],
     });
+
+    // await Trikl.tip("0xF3fb3Cb8b34F5331B82219183c5AdEf40EE10ba5", {
+    //   value: num,
+    // });
   };
 
   return (
@@ -205,8 +171,9 @@ const EngageMenu: React.FC = () => {
 
       <IonButton fill="clear" shape="round" onClick={handleTip}>
         <IonIcon icon={giftOutline} slot="start" />
-        Tip 0.0001 ETH
+        Tip ETH
       </IonButton>
+
       {/* </button> */}
     </div>
   );

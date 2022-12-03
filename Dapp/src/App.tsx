@@ -55,6 +55,12 @@ import { TfiWrite } from "react-icons/tfi";
 import LoginPage from "./pages/Login/LoginPage";
 import NewPost from "./pages/NewPost/NewPost";
 import { useState } from "react";
+import CreatorProfile from "./pages/Profile/CreatorProfile";
+
+//Wagmi
+import { WagmiConfig, createClient, configureChains, chain } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
+import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 
 setupIonicReact();
 
@@ -63,93 +69,129 @@ const App: React.FC = () => {
   const [isProfileAvailable, setIsProfileAvailable] = useState<boolean>(false);
   const [accountaddress, setAccountAddress] = useState<string>("");
   const [nameFromDatabase, setNameFromDatabase] = useState<string>("");
+  const [imgFromDatabase, setImgFromDatabase] = useState<string>("");
   const [aboutFromDatabase, setAboutFromDatabase] = useState<string>("");
+  const [coverImgFromDatabase, setCoverImgFromDatabase] = useState<string>("");
+  const { chains, provider, webSocketProvider } = configureChains(
+    [chain.mainnet, chain.polygonMumbai],
+    [publicProvider()]
+  );
+  //const connectors = new MetaMaskConnector();
+
+  const client = createClient({
+    autoConnect: true,
+    connectors() {
+      return [new MetaMaskConnector({ chains })];
+    },
+    provider,
+    webSocketProvider,
+  });
 
   return (
-    <IonApp className="font-poppins">
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle className="ion-padding-left ion-padding-top">
-            <div className="flex justify-between items-center">
-              <div>
-                <IonRouterLink href="/feed">
-                  <img src={TriklLogo} alt="Trikl Logo" width="30px" />
-                </IonRouterLink>
+    <WagmiConfig client={client}>
+      <IonApp className="font-poppins">
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle className="ion-padding-left ion-padding-top">
+              <div className="flex justify-between items-center">
+                <div>
+                  <IonRouterLink href="/feed">
+                    <img src={TriklLogo} alt="Trikl Logo" width="30px" />
+                  </IonRouterLink>
+                </div>
+                <IonButton fill="clear" href="/newpost">
+                  <TfiWrite className="w-4" />
+                </IonButton>
               </div>
-              <IonButton fill="clear" href="/newpost">
-                <TfiWrite className="w-4" />
-              </IonButton>
-            </div>
-          </IonTitle>
-        </IonToolbar>
-      </IonHeader>
+            </IonTitle>
+          </IonToolbar>
+        </IonHeader>
 
-      <IonContent>
-        <IonReactRouter>
-          <IonTabs>
-            <IonRouterOutlet>
-              <Route exact path="/feed">
-                <Feed />
-              </Route>
-              <Route exact path="/search">
-                <Search />
-              </Route>
-              <Route path="/community">
-                <Community />
-              </Route>
-              <Route path="/profile">
-                <Profile
-                  isLoggedIn={isLoggedIn}
-                  setIsLoggedIn={setIsLoggedIn}
-                  isProfileAvailable={isProfileAvailable}
-                  setIsProfileAvailable={setIsProfileAvailable}
-                  accountaddress={accountaddress}
-                  setAccountAddress={setAccountAddress}
-                  nameFromDatabase={nameFromDatabase}
-                  setNameFromDatabase={setNameFromDatabase}
-                  aboutFromDatabase={aboutFromDatabase}
-                  setAboutFromDatabase={setAboutFromDatabase}
-                />
-              </Route>
-              <Route path="/login">
-                <LoginPage />
-              </Route>
-              <Route path="/newpost">
-                <NewPost
-                  accountaddress={accountaddress}
-                  setAccountAddress={setAccountAddress}
-                />
-              </Route>
-              <Route exact path="/">
-                <Redirect to="/feed" />
-              </Route>
-            </IonRouterOutlet>
+        <IonContent>
+          <IonReactRouter>
+            <IonTabs>
+              <IonRouterOutlet>
+                <Route exact path="/feed">
+                  <Feed />
+                </Route>
+                <Route exact path="/search">
+                  <Search />
+                </Route>
+                <Route path="/community">
+                  <Community />
+                </Route>
+                <Route path="/profile">
+                  <Profile
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                    isProfileAvailable={isProfileAvailable}
+                    setIsProfileAvailable={setIsProfileAvailable}
+                    accountaddress={accountaddress}
+                    setAccountAddress={setAccountAddress}
+                    nameFromDatabase={nameFromDatabase}
+                    setNameFromDatabase={setNameFromDatabase}
+                    imgFromDatabase={imgFromDatabase}
+                    setImgFromDatabase={setImgFromDatabase}
+                  />
+                </Route>
+                <Route path="/login">
+                  <LoginPage />
+                </Route>
+                <Route path="/creatorProfile">
+                  <CreatorProfile
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                    isProfileAvailable={isProfileAvailable}
+                    setIsProfileAvailable={setIsProfileAvailable}
+                    accountaddress={accountaddress}
+                    setAccountAddress={setAccountAddress}
+                    nameFromDatabase={nameFromDatabase}
+                    setNameFromDatabase={setNameFromDatabase}
+                    imgFromDatabase={imgFromDatabase}
+                    setImgFromDatabase={setImgFromDatabase}
+                    aboutFromDatabase={aboutFromDatabase}
+                    setAboutFromDatabase={setAboutFromDatabase}
+                    coverImgFromDatabase={coverImgFromDatabase}
+                    setCoverImgFromDatabase={setCoverImgFromDatabase}
+                  />
+                </Route>
+                <Route path="/newpost">
+                  <NewPost
+                    accountaddress={accountaddress}
+                    setAccountAddress={setAccountAddress}
+                  />
+                </Route>
+                <Route exact path="/">
+                  <Redirect to="/feed" />
+                </Route>
+              </IonRouterOutlet>
 
-            <IonTabBar slot="bottom">
-              <IonTabButton tab="feed" href="/feed">
-                <IonIcon icon={homeOutline} className="w-4" />
-                <IonLabel>
-                  <span className="text-xs">Feed</span>
-                </IonLabel>
-              </IonTabButton>
+              <IonTabBar slot="bottom">
+                <IonTabButton tab="feed" href="/feed">
+                  <IonIcon icon={homeOutline} className="w-4" />
+                  <IonLabel>
+                    <span className="text-xs">Feed</span>
+                  </IonLabel>
+                </IonTabButton>
 
-              <IonTabButton tab="community" href="/community">
-                <IonIcon icon={peopleOutline} className="w-4" />
-                <IonLabel>
-                  <span className="text-xs">Leaderboard</span>
-                </IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="profile" href="/profile">
-                <IonIcon icon={personCircleOutline} className="w-4" />
-                <IonLabel>
-                  <span className="text-xs">Profile</span>
-                </IonLabel>
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
-        </IonReactRouter>
-      </IonContent>
-    </IonApp>
+                <IonTabButton tab="community" href="/community">
+                  <IonIcon icon={peopleOutline} className="w-4" />
+                  <IonLabel>
+                    <span className="text-xs">Leaderboard</span>
+                  </IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="profile" href="/profile">
+                  <IonIcon icon={personCircleOutline} className="w-4" />
+                  <IonLabel>
+                    <span className="text-xs">Profile</span>
+                  </IonLabel>
+                </IonTabButton>
+              </IonTabBar>
+            </IonTabs>
+          </IonReactRouter>
+        </IonContent>
+      </IonApp>
+    </WagmiConfig>
   );
 };
 

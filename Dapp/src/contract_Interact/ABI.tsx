@@ -16,12 +16,17 @@ const abi = [
   },
   {
     inputs: [],
-    name: "TransactionFailed",
+    name: "NotEnoughBalance",
     type: "error",
   },
   {
     inputs: [],
-    name: "TriklBasic__NotOwner",
+    name: "NotOwner",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TransactionFailed",
     type: "error",
   },
   {
@@ -37,12 +42,6 @@ const abi = [
         indexed: false,
         internalType: "uint256",
         name: "amount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "timestamp",
         type: "uint256",
       },
     ],
@@ -66,15 +65,23 @@ const abi = [
         name: "_winner3",
         type: "address",
       },
+    ],
+    name: "distributeRewards",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
         internalType: "address",
         name: "_creator",
         type: "address",
       },
     ],
-    name: "distributeRewards",
+    name: "fundCreatorPool",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {

@@ -9,19 +9,13 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  IonTextarea,
   useIonAlert,
 } from "@ionic/react";
 import React, { useEffect, useRef, useState } from "react";
 import { ethers } from "ethers";
-import { generateChallenge, authenticate } from "../../utils";
-import { useSignMessage, useConnect, Connector } from "wagmi";
-import { signMessage } from "@wagmi/core";
-import { InjectedConnector } from "wagmi/connectors/injected";
-
-//import { client, challenge, authenticate } from "../../utils";
 
 import axios from "axios";
-import { MetaMaskConnector } from "wagmi/dist/connectors/metaMask";
 
 type propTypes = {
   isLoggedIn: boolean;
@@ -34,8 +28,12 @@ type propTypes = {
   setNameFromDatabase: React.Dispatch<React.SetStateAction<string>>;
   imgFromDatabase: string;
   setImgFromDatabase: React.Dispatch<React.SetStateAction<string>>;
+  aboutFromDatabase: string;
+  setAboutFromDatabase: React.Dispatch<React.SetStateAction<string>>;
+  coverImgFromDatabase: string;
+  setCoverImgFromDatabase: React.Dispatch<React.SetStateAction<string>>;
 };
-const Profile = ({
+const CreatorProfile = ({
   isLoggedIn,
   setIsLoggedIn,
   isProfileAvailable,
@@ -44,10 +42,13 @@ const Profile = ({
   setAccountAddress,
   nameFromDatabase,
   setNameFromDatabase,
+  aboutFromDatabase,
+  setAboutFromDatabase,
   imgFromDatabase,
   setImgFromDatabase,
+  coverImgFromDatabase,
+  setCoverImgFromDatabase,
 }: propTypes) => {
-  const [token, setToken] = useState();
   const provider = new ethers.providers.Web3Provider((window as any).ethereum);
   const [creatorProfileExists, setCreatorProfileExists] = useState(false);
 
@@ -69,6 +70,7 @@ const Profile = ({
   };
 
   const getUserInfo = async (addressParam: any) => {
+    // CHECK IF USER EXISTS
     await axios
       .post("http://localhost:4000/api/users/get-user-byWallet", {
         walletAddress: addressParam,
@@ -90,6 +92,8 @@ const Profile = ({
       })
       .then((res) => {
         setCreatorProfileExists(true);
+        setCoverImgFromDatabase(res.data.coverImg);
+        setAboutFromDatabase(res.data.about);
         console.log("Current Creator Profile >> ", res);
       })
       .catch((err) => {
@@ -99,55 +103,60 @@ const Profile = ({
   };
 
   const master = async () => {
-    await checkConnection().then(() =>
-      handleLogin().then((res) => getUserInfo(res))
-    );
+    await checkConnection();
+    const address = await handleLogin();
+    await getUserInfo(address);
   };
 
   useEffect(() => {
     master();
   }, []);
 
-  // const signIn = async () => {
-  //   try {
-  //     if (!isLoggedIn) {
-  //       return alert("Please connect your wallet first");
-  //     }
-  //     const challenge = await generateChallenge(accountaddress);
-  //     const signature = await signMessage({ message: challenge });
-
-  //     const accessToken = await authenticate(accountaddress, signature);
-  //     console.log({ accessToken });
-  //     setToken(accessToken);
-  //     window.sessionStorage.setItem("accessToken", accessToken);
-  //     console.log({ signature });
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   const [presentAlert] = useIonAlert();
 
   const NameInputRef = useRef<HTMLIonInputElement>(null);
   const UserImgRef = useRef<HTMLIonInputElement>(null);
+  const CreatorCoverImgRef = useRef<HTMLIonInputElement>(null);
+  const UserAboutRef = useRef<HTMLIonTextareaElement>(null);
 
-  const submitProfile = () => {
+  const submitProfile = (e: any) => {
+    e.preventDefault();
     const NameInput = NameInputRef.current?.value?.toString();
     const UserImg = UserImgRef.current?.value?.toString();
+    const CreatorCoverImg = CreatorCoverImgRef.current?.value?.toString();
+    const UserAbout = UserAboutRef.current?.value?.toString();
 
+    const creatorFormData = {
+      walletAddress: accountaddress,
+      username: "unnamed",
+      name: nameFromDatabase,
+      profilePic: imgFromDatabase,
+      coverImg: CreatorCoverImg,
+      about: UserAbout,
+      nFollowers: "20",
+      SocialLinks: [
+        {
+          _socialId: "23udewer",
+          platformName: "unnamed",
+          profileLink: "samplesocial.link",
+        },
+      ],
+    };
+
+    console.log("creatorFormData >>>>> ", creatorFormData);
+
+    // Uploading form data to DB
     axios
-      .post("http://localhost:4000/api/users/create-user", {
-        walletAddress: accountaddress,
-        username: "unnamed",
-        name: NameInput,
-        profilePic: UserImg,
-      })
+      .post(
+        "http://localhost:4000/api/creators/create-creator-profile",
+        creatorFormData
+      )
       .then(function (response) {
         console.log(response);
         presentAlert({
           header: "Congratulations  🤩 ",
           subHeader: "",
-          message: "Your Profile is Created 🥳 ",
+          message: "You're Now A Creator 🥳 ",
           buttons: ["OK"],
         });
       })
@@ -169,8 +178,8 @@ const Profile = ({
           <IonHeader class="ion-text-center ion-padding">
             <h2 className="text-xl text-lightAccent font-semibold pt-10">
               {nameFromDatabase
-                ? `Welcome ${nameFromDatabase}`
-                : "Create Profile"}
+                ? `Let's Start Creating Content`
+                : "Create Profile First"}
             </h2>
           </IonHeader>
 
@@ -201,44 +210,36 @@ const Profile = ({
                 <IonInput ref={UserImgRef}>{imgFromDatabase}</IonInput>
               </IonItem>
 
-              <div className="flex flex-col justify-center gap-5 pt-5">
-                {isLoggedIn ? (
-                  <button
-                    onClick={submitProfile}
-                    disabled={isProfileAvailable ? true : false}
-                    className="bg-triklBlue/75 rounded-full py-2 px-4 disabled:bg-transparent text-triklGray"
-                  >
-                    {isProfileAvailable
-                      ? "You're registered as User!"
-                      : "Submit"}
-                  </button>
-                ) : (
-                  ""
-                )}
+              <IonItem>
+                <IonLabel position="stacked">
+                  <span className="text-sm text-triklGray">Cover Image</span>
+                </IonLabel>
+                <IonInput ref={CreatorCoverImgRef}>
+                  {coverImgFromDatabase}
+                </IonInput>
+              </IonItem>
 
-                <IonButton
-                  onClick={handleLogin}
-                  fill="clear"
-                  disabled={isLoggedIn ? true : false}
-                  className="bg-triklBlue rounded-full py-2 px-4 disabled:hidden"
-                >
-                  <span className="text-white">
-                    {isLoggedIn ? "Connected" : "Connect Wallet"}
-                  </span>
-                </IonButton>
-              </div>
+              <IonItem>
+                <IonLabel position="stacked">
+                  <span className="text-sm text-triklGray">About</span>
+                </IonLabel>
+                <IonTextarea ref={UserAboutRef} autoGrow={true}>
+                  {aboutFromDatabase}
+                </IonTextarea>
+              </IonItem>
 
               {isProfileAvailable ? (
                 <IonButton
                   expand="block"
                   fill="clear"
-                  // disabled={isCreator}
+                  disabled={creatorProfileExists}
                   href="/creatorProfile"
+                  onClick={submitProfile}
                   className="w-full text-white bg-triklBlue rounded-full py-2 disabled:bg-transparent disabled:text-lightAccent/50"
                 >
                   <span className="text-xs capitalize">
                     {creatorProfileExists
-                      ? "Visit Your Creator Profile"
+                      ? "Your Creator Profile Is Active!"
                       : "Activate Creator Profile"}
                   </span>
                 </IonButton>
@@ -253,4 +254,4 @@ const Profile = ({
   );
 };
 
-export default Profile;
+export default CreatorProfile;
