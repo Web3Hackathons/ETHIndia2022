@@ -121,35 +121,6 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [activeUser, setActiveUser] = useState("");
 
-  useEffect(() => {
-    const getaccount = async () => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const accounts = await provider.listAccounts();
-      setActiveUser(accounts[0]);
-      console.log(accounts[0]);
-    };
-
-    getaccount();
-
-    axios
-      .post("http://localhost:4000/api/likes/get-likes-byCID/", {
-        blogCID: card.blogCID,
-      })
-      .then((res) => {
-        if (res.data.length) {
-          console.log(res.data[0].likedUsers);
-          res.data[0].likedUsers.map((user: any) => {
-            if (user.walletAddress === activeUser) {
-              setIsLiked(true);
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        console.log("some error occured > ", err);
-      });
-  }, []);
-
   const [presentAlert] = useIonAlert();
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const Trikl = new ethers.Contract(
@@ -163,7 +134,7 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
       .post("http://localhost:4000/api/likes/add-like", {
         blogCID: card.blogCID,
         authorwalletAddress: card.author.walletAddress,
-        likedUsers: [{ walletAddress: activeUser }],
+        likedUsers: activeUser,
       })
       .then(function (response) {
         presentAlert({
@@ -197,7 +168,36 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
       value: tipInputAmount.toString(),
     });
   };
-  //
+
+  useEffect(() => {
+    const getaccount = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const accounts = await provider.listAccounts();
+      setActiveUser(accounts[0]);
+      console.log(accounts[0]);
+    };
+
+    getaccount();
+
+    axios
+      .post("http://localhost:4000/api/likes/get-likes-byCID/", {
+        blogCID: card.blogCID,
+      })
+      .then((res) => {
+        if (res.data.length) {
+          console.log(res.data[0].likedUsers);
+          res.data[0].likedUsers.map((user: any) => {
+            if (user.walletAddress === activeUser) {
+              setIsLiked(true);
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        console.log("some error occured > ", err);
+      });
+  }, [handleClick]);
+
   return (
     <div className="flex flex-col justify-around gap-4 pt-10 w-5/6 mx-auto">
       <div className="rounded-md text-sm drop-shadow-md bg-white">

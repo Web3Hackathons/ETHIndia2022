@@ -12,25 +12,28 @@ exports.addLike = function (req, res) {
 
   const { blogCID, likeTime, authorwalletAddress, likedUsers } = data;
 
-  Likes.findOne({ blogCID, authorwalletAddress }).then((blog) => {
-    // if (blog) {
-    //   error = "Blog already liked";
-    //   return res.status(400).json({ error });
-    // } else {
-    const likes = new Likes({
-      blogCID,
-      likeTime,
-      authorwalletAddress,
-      likedUsers,
-    });
+  Likes.findOne({ blogCID }).then((blog) => {
+    if (blog) {
+      blog.likedUsers.addToSet(likedUsers);
+      blog.save();
+      res.status(200).json({
+        success: true,
+      });
+    } else {
+      const likes = new Likes({
+        blogCID,
+        likeTime,
+        authorwalletAddress,
+        likedUsers,
+      });
 
-    const response = Likes.create(likes);
+      const response = Likes.create(likes);
 
-    res.status(200).json({
-      success: true,
-      data: likes,
-    });
-    // }
+      res.status(200).json({
+        success: true,
+        data: likes,
+      });
+    }
   });
 };
 
@@ -50,9 +53,17 @@ exports.getLikesByCID = function (req, res) {
     .catch((error) => res.status(404).json({ error }));
 };
 
-// //Update Likes by CID
-// exports.updateLikesByCID = function(req,res){
-//     //const { blogCID } = req.body;
-
-//     Likes.findOneAndUpdate({blogCID: req.body}, )
-// }
+//Update Likes by CID
+// exports.updateLikesByCID = function (req, res) {
+//   Likes.Update(
+//     { blogCID: req.body.blogCID },
+//     { $push: { likedUsers: req.body.likedUsers[0].walletAddress } },
+//     function (error, res) {
+//       if (error) {
+//         console.log(error);
+//       } else {
+//         console.log(res);
+//       }
+//     }
+//   );
+// };
