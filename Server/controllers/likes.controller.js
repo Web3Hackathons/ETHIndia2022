@@ -49,10 +49,3 @@ exports.getLikesByCID = function (req, res) {
     })
     .catch((error) => res.status(404).json({ error }));
 };
-
-// //Update Likes by CID
-// exports.updateLikesByCID = function(req,res){
-//     //const { blogCID } = req.body;
-
-//     Likes.findOneAndUpdate({blogCID: req.body}, )
-// }
