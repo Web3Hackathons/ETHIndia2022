@@ -15,12 +15,12 @@ import {
 import React from "react";
 import { ethers } from "ethers";
 import abi from "../../contract_Interact/ABI";
-// import "./Tab1.css";
 
 const Leaderboard: React.FC = () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const Trikl = new ethers.Contract(
-    "0x120D092B5B24aE6c1C661b888715f1d62a63B8f0",
+    process.env.REACT_APP_TRIKL_CONTRACT_ADDRESS!,
+    // "0x120D092B5B24aE6c1C661b888715f1d62a63B8f0",
     abi,
     provider.getSigner()
   );
