@@ -1,0 +1,7 @@
+{
+  "name": "trikl-fe",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
