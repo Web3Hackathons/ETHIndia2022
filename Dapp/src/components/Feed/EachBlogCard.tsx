@@ -21,7 +21,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import axios from "axios";
 import "swiper/swiper.min.css";
 import "@ionic/react/css/ionic-swiper.css";
-import { heartOutline, heart, giftOutline } from "ionicons/icons";
+import { heartOutline, heart, giftOutline, car } from "ionicons/icons";
 import { Contract, ethers } from "ethers";
 import abi from "../../contract_Interact/ABI";
 import { ImNewTab } from "react-icons/im";
@@ -31,7 +31,7 @@ const EachBlogCard: React.FC = () => {
 
   useEffect(() => {
     axios
-      .post("http://localhost:4000/api/blogs/")
+      .get("http://localhost:4000/api/blogs/")
       .then((response) => {
         console.log(">>>>>>>>>", response.data);
         setData(response.data);
@@ -126,18 +126,28 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const accounts = await provider.listAccounts();
       setActiveUser(accounts[0]);
+      console.log(accounts[0]);
     };
 
     getaccount();
 
     axios
-      .post("http://localhost:4000/api/likes/get-likes-byCID", {
-        blogCID: "",
+      .post("http://localhost:4000/api/likes/get-likes-byCID/", {
+        blogCID: card.blogCID,
       })
       .then((res) => {
-        console.log(">>>>>>>>>", res.data);
+        if (res.data.length) {
+          console.log(res.data[0].likedUsers);
+          res.data[0].likedUsers.map((user: any) => {
+            if (user.walletAddress === activeUser) {
+              setIsLiked(true);
+            }
+          });
+        }
       })
-      .catch((error) => console.log(error));
+      .catch((err) => {
+        console.log("some error occured > ", err);
+      });
   }, []);
 
   const [presentAlert] = useIonAlert();
@@ -151,8 +161,8 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
   const handleClick = () => {
     axios
       .post("http://localhost:4000/api/likes/add-like", {
-        blogCID: "gdfdhfhfg",
-        authorwalletAddress: "0x9DC61eEc0C05BFA16eE1DC51B3a0aED358E18Eb521",
+        blogCID: card.blogCID,
+        authorwalletAddress: card.author.walletAddress,
         likedUsers: [{ walletAddress: activeUser }],
       })
       .then(function (response) {
@@ -163,10 +173,10 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
           buttons: ["OK"],
         });
 
-        // console.log("response", response);
+        console.log("response", response);
       })
       .catch((error) => {
-        console.log("error", error.response.data.error);
+        console.log("error", error);
         presentAlert({
           header: "Sorry! 🙇🏻",
           subHeader: error.response.data.error,
@@ -187,11 +197,16 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
       value: tipInputAmount.toString(),
     });
   };
-
+  //
   return (
     <div className="flex flex-col justify-around gap-4 pt-10 w-5/6 mx-auto">
       <div className="rounded-md text-sm drop-shadow-md bg-white">
-        <IonButton fill="clear" shape="round" onClick={handleClick}>
+        <IonButton
+          fill="clear"
+          shape="round"
+          onClick={handleClick}
+          disabled={isLiked}
+        >
           <IonIcon icon={isLiked ? heart : heartOutline} slot="start" />
           {isLiked ? "Liked" : "Like"}
         </IonButton>
