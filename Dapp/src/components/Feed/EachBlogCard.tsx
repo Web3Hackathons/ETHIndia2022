@@ -5,13 +5,16 @@ import {
   IonHeader,
   IonIcon,
   IonImg,
+  IonInput,
   IonItem,
+  IonLabel,
   IonList,
   IonListHeader,
   IonModal,
   IonPage,
   IonTitle,
   useIonAlert,
+  useIonModal,
   useIonPopover,
 } from "@ionic/react";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -19,7 +22,7 @@ import axios from "axios";
 import "swiper/swiper.min.css";
 import "@ionic/react/css/ionic-swiper.css";
 import { heartOutline, heart, giftOutline } from "ionicons/icons";
-import { ethers } from "ethers";
+import { Contract, ethers } from "ethers";
 import abi from "../../contract_Interact/ABI";
 import { ImNewTab } from "react-icons/im";
 
@@ -94,7 +97,9 @@ const EachBlogCard: React.FC = () => {
               </p>
 
               {/* MENU */}
-              <EngageMenu />
+              <div className="w-full h-full">
+                <EngageMenu card={card} />
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>
@@ -104,7 +109,14 @@ const EachBlogCard: React.FC = () => {
 };
 export default EachBlogCard;
 
-const EngageMenu: React.FC = () => {
+//
+//
+//
+//
+//
+
+const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
+  console.log("Hello from EngageMenu", card.author.walletAddress);
   const [isLiked, setIsLiked] = useState(false);
 
   const [presentAlert] = useIonAlert();
@@ -146,35 +158,109 @@ const EngageMenu: React.FC = () => {
       });
   };
 
+  // const [tipAmount, setTipAmount] = useState(0)
+  const TipAmountRef = useRef<HTMLIonInputElement>(null);
+
   const handleTip = async () => {
-    const num = 10000000;
+    const tipInputAmount = Number(TipAmountRef.current?.value) * 1e18;
 
-    presentAlert({
-      header: "Sorry! 🙇🏻",
-      subHeader: "error.response.data.error",
-      message: "You already earned your reward for the liking this post 🥳",
-      buttons: ["OK", "Cancel"],
+    console.log("Tip amount ==== ", tipInputAmount.toString());
+    await Trikl.tip(card.author.walletAddress, {
+      value: tipInputAmount.toString(),
     });
-
-    // await Trikl.tip("0xF3fb3Cb8b34F5331B82219183c5AdEf40EE10ba5", {
-    //   value: num,
-    // });
   };
 
   return (
-    <div className="bg-white flex justify-around gap-2 w-5/6 mx-auto rounded-full text-sm mt-5 mb-10 drop-shadow-md">
-      {/* <button > */}
-      <IonButton fill="clear" shape="round" onClick={handleClick}>
-        <IonIcon icon={isLiked ? heart : heartOutline} slot="start" />
-        {isLiked ? "Liked" : "Like"}
-      </IonButton>
+    <div className="flex flex-col justify-around gap-4 pt-10 w-5/6 mx-auto">
+      <div className="rounded-md text-sm drop-shadow-md bg-white">
+        <IonButton fill="clear" shape="round" onClick={handleClick}>
+          <IonIcon icon={isLiked ? heart : heartOutline} slot="start" />
+          {isLiked ? "Liked" : "Like"}
+        </IonButton>
+      </div>
 
-      <IonButton fill="clear" shape="round" onClick={handleTip}>
-        <IonIcon icon={giftOutline} slot="start" />
-        Tip ETH
-      </IonButton>
-
-      {/* </button> */}
+      <div>
+        <ModalExample
+          Trikl={Trikl}
+          handleTip={handleTip}
+          TipAmountRef={TipAmountRef}
+        />
+      </div>
     </div>
+  );
+};
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+const Body: React.FC<{
+  // count: number;
+  Trikl: Contract;
+  handleTip: () => Promise<void>;
+  onDismiss: () => void;
+  TipAmountRef: any;
+  // onIncrement: () => void;
+}> = ({ Trikl, handleTip, onDismiss, TipAmountRef }) => {
+  console.log(Trikl, TipAmountRef);
+  return (
+    <div className="h-screen w-screen flex flex-col justify-center items-center m-0">
+      <IonItem className="flex flex-col gap-5">
+        <IonLabel position="stacked">Enter Amount To Tip (MATIC)</IonLabel>
+        <IonInput ref={TipAmountRef}></IonInput>
+      </IonItem>
+      <IonButton expand="block" onClick={() => handleTip()}>
+        Tip
+      </IonButton>
+      <IonButton expand="block" onClick={() => onDismiss()}>
+        Cancel
+      </IonButton>
+    </div>
+  );
+};
+
+//
+//
+//
+//
+//
+//
+//
+const ModalExample: React.FC<{
+  Trikl: Contract;
+  handleTip: () => Promise<void>;
+  TipAmountRef: any;
+}> = ({ Trikl, handleTip, TipAmountRef }) => {
+  const handleDismiss = () => {
+    dismiss();
+  };
+
+  /**
+   * First parameter is the component to show, second is the props to pass
+   */
+  const [present, dismiss] = useIonModal(Body, {
+    Trikl,
+    handleTip,
+    onDismiss: handleDismiss,
+    TipAmountRef,
+  });
+
+  return (
+    <IonButton
+      expand="block"
+      onClick={() => {
+        present({
+          cssClass: "my-class",
+        });
+      }}
+    >
+      <IonIcon icon={giftOutline} slot="start" />
+      Tip
+    </IonButton>
   );
 };
