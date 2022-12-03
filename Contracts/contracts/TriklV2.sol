@@ -51,12 +51,12 @@ contract TriklV2{
 
     function fundRewardPool() public payable {
         emit FundRewardPool(msg.sender, msg.value);
-        rewardPools[msg.sender] = msg.value;
+        rewardPools[msg.sender] = rewardPools[msg.sender] + msg.value;
     }
 
     function fundCreatorPool(address _creator) public payable{
         emit FundRewardPool(_creator, msg.value);
-        rewardPools[_creator] = msg.value;
+        rewardPools[_creator] = rewardPools[_creator] + msg.value;
     }
 
     function distributeRewards(address _winner1, address _winner2, address _winner3) public{         
