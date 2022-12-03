@@ -207,7 +207,19 @@ const CreatorProfile = ({
                 <IonLabel position="stacked">
                   <span className="text-sm text-triklGray">Profile Pic</span>
                 </IonLabel>
-                <IonInput ref={UserImgRef}>{imgFromDatabase}</IonInput>
+                <IonInput ref={UserImgRef}>
+                  {imgFromDatabase.length > 0 ? (
+                    <div className="w-20 h-20 rounded-full mt-2">
+                      <img
+                        className="w-full h-full object-cover rounded-full"
+                        src={imgFromDatabase}
+                        alt="Cover Image"
+                      />
+                    </div>
+                  ) : (
+                    imgFromDatabase
+                  )}
+                </IonInput>
               </IonItem>
 
               <IonItem>
@@ -215,7 +227,15 @@ const CreatorProfile = ({
                   <span className="text-sm text-triklGray">Cover Image</span>
                 </IonLabel>
                 <IonInput ref={CreatorCoverImgRef}>
-                  {coverImgFromDatabase}
+                  {coverImgFromDatabase.length > 0 ? (
+                    <img
+                      src={coverImgFromDatabase}
+                      alt="Cover Image"
+                      className="mt-2 max-h-[50vh] object-contain"
+                    />
+                  ) : (
+                    coverImgFromDatabase
+                  )}
                 </IonInput>
               </IonItem>
 
