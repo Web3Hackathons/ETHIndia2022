@@ -52,18 +52,3 @@ exports.getLikesByCID = function (req, res) {
     })
     .catch((error) => res.status(404).json({ error }));
 };
-
-//Update Likes by CID
-// exports.updateLikesByCID = function (req, res) {
-//   Likes.Update(
-//     { blogCID: req.body.blogCID },
-//     { $push: { likedUsers: req.body.likedUsers[0].walletAddress } },
-//     function (error, res) {
-//       if (error) {
-//         console.log(error);
-//       } else {
-//         console.log(res);
-//       }
-//     }
-//   );
-// };
