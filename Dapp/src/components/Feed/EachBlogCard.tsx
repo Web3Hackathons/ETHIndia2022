@@ -31,7 +31,7 @@ const EachBlogCard: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/blogs/")
+      .post("http://localhost:4000/api/blogs/")
       .then((response) => {
         console.log(">>>>>>>>>", response.data);
         setData(response.data);
@@ -107,6 +107,7 @@ const EachBlogCard: React.FC = () => {
     </IonPage>
   );
 };
+
 export default EachBlogCard;
 
 //
@@ -118,6 +119,26 @@ export default EachBlogCard;
 const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
   console.log("Hello from EngageMenu", card.author.walletAddress);
   const [isLiked, setIsLiked] = useState(false);
+  const [activeUser, setActiveUser] = useState("");
+
+  useEffect(() => {
+    const getaccount = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const accounts = await provider.listAccounts();
+      setActiveUser(accounts[0]);
+    };
+
+    getaccount();
+
+    axios
+      .post("http://localhost:4000/api/likes/get-likes-byCID", {
+        blogCID: "",
+      })
+      .then((res) => {
+        console.log(">>>>>>>>>", res.data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   const [presentAlert] = useIonAlert();
   const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -130,13 +151,9 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
   const handleClick = () => {
     axios
       .post("http://localhost:4000/api/likes/add-like", {
-        blogCID: "12345gfhfhfh",
-        nLikes: "1",
-        author: {
-          walletAddress: "0x9DC61eEc0C05BFA16eE1DC51B3a0aED358E18Eb521",
-          profilePic: "string",
-          name: "Shalu",
-        },
+        blogCID: "gdfdhfhfg",
+        authorwalletAddress: "0x9DC61eEc0C05BFA16eE1DC51B3a0aED358E18Eb521",
+        likedUsers: [{ walletAddress: activeUser }],
       })
       .then(function (response) {
         presentAlert({
@@ -145,6 +162,7 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
           message: "You got +10 points for the liking this post 🥳",
           buttons: ["OK"],
         });
+
         // console.log("response", response);
       })
       .catch((error) => {
