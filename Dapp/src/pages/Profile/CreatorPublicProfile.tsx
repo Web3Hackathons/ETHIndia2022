@@ -53,9 +53,12 @@ const CreatorPublicProfile: React.FC = () => {
 
   const getCreatorInfo = () => {
     axios
-      .post("http://localhost:4000/api/creators/get-creator-byWallet", {
-        walletAddress: creatorWalletAdd,
-      })
+      .post(
+        `${process.env.REACT_APP_SERVER}api/creators/get-creator-byWallet`,
+        {
+          walletAddress: creatorWalletAdd,
+        }
+      )
       .then((res) => {
         setCreatorInfo(res.data);
       })

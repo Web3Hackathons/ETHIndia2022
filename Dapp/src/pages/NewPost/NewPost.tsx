@@ -92,7 +92,7 @@ const NewPost = ({ accountaddress, setAccountAddress }: propTypes) => {
     const masterFunc = async () => {
       const ipfsUrl = await storeFileToIPFS();
       axios
-        .post("http://localhost:4000/api/blogs/create-blog", {
+        .post(`${process.env.REACT_APP_SERVER}api/blogs/create-blog`, {
           blogCID: ipfsUrl.toString(),
           blogContent: blogVal,
           title: titleVal,

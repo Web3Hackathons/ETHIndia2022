@@ -43,7 +43,7 @@ const Leaderboard: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/creators")
+      .get(`${process.env.REACT_APP_SERVER}api/creators`)
       .then((res) => {
         console.log(res.data);
         setCreatorsInfo(res.data);

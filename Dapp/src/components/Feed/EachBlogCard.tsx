@@ -12,7 +12,7 @@ const EachBlogCard: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/blogs/")
+      .get(`${process.env.REACT_APP_SERVER}api/blogs/`)
       .then((response) => {
         setData(response.data);
       })

@@ -70,7 +70,7 @@ const Profile = ({
 
   const getUserInfo = async (addressParam: any) => {
     await axios
-      .post("http://localhost:4000/api/users/get-user-byWallet", {
+      .post(`${process.env.REACT_APP_SERVER}api/users/get-user-byWallet`, {
         walletAddress: addressParam,
       })
       .then((res) => {
@@ -85,9 +85,12 @@ const Profile = ({
 
     // CHECK IF USER HAS CREATOR PROFILE
     await axios
-      .post("http://localhost:4000/api/creators/get-creator-byWallet", {
-        walletAddress: addressParam,
-      })
+      .post(
+        `${process.env.REACT_APP_SERVER}api/creators/get-creator-byWallet`,
+        {
+          walletAddress: addressParam,
+        }
+      )
       .then((res) => {
         setCreatorProfileExists(true);
         console.log("Current Creator Profile >> ", res);
@@ -136,7 +139,7 @@ const Profile = ({
     const UserImg = UserImgRef.current?.value?.toString();
 
     axios
-      .post("http://localhost:4000/api/users/create-user", {
+      .post(`${process.env.REACT_APP_SERVER}api/users/create-user`, {
         walletAddress: accountaddress,
         username: "unnamed",
         name: NameInput,

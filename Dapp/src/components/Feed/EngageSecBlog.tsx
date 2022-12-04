@@ -23,7 +23,7 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
   // Handle Like / Also connected with Tip In Blog
   const handleClick = () => {
     axios
-      .post("http://localhost:4000/api/likes/add-likes", {
+      .post(`${process.env.REACT_APP_SERVER}api/likes/add-likes`, {
         blogCID: card.blogCID,
         authorwalletAddress: card.author.walletAddress,
         likedUsers: activeUser,
@@ -66,7 +66,7 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
   const getLikes = async () => {
     const currBlogId = await card.blogCID;
     await axios
-      .post("http://localhost:4000/api/likes/get-likes-byCID/", {
+      .post(`${process.env.REACT_APP_SERVER}api/likes/get-likes-byCID/`, {
         blogCID: currBlogId,
       })
       .then((res) => {
