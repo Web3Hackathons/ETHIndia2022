@@ -61,6 +61,7 @@ import CreatorProfile from "./pages/Profile/CreatorProfile";
 import { WagmiConfig, createClient, configureChains, chain } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import CreatorPublicProfile from "./pages/Profile/CreatorPublicProfile";
 
 setupIonicReact();
 
@@ -154,6 +155,9 @@ const App: React.FC = () => {
                     coverImgFromDatabase={coverImgFromDatabase}
                     setCoverImgFromDatabase={setCoverImgFromDatabase}
                   />
+                </Route>
+                <Route path="/creator/:id">
+                  <CreatorPublicProfile />
                 </Route>
                 <Route path="/newpost">
                   <NewPost
