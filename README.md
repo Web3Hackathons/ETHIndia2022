@@ -36,6 +36,29 @@ Solidity, Typescript, Node.js, React, Ionic Framework, Shardeum, Polygon, IPFS, 
 - Launch other content formats - text, image, audio and video, etc.
 
 
+## Project Links
+- Working Code Demo Video - https://www.loom.com/share/705a17a8e7e044df846c7f8afa6249b3
+- Smart contract on Ethereum (Goerli) - https://goerli.etherscan.io/address/0x4AF7785Be2FF025e09E82fAeD8043FE70Ca34de8
+- Smart Contract Deployed on Polygon (Mumbai) - https://mumbai.polygonscan.com/address/0x120D092B5B24aE6c1C661b888715f1d62a63B8f0#readContract
+- Smart contract on Shardeum - https://explorer-liberty10.shardeum.org/account/0x1a3739638446a5260ee387e517524888406b3f82
+- Deployed Program - 
 
+
+## Getting Started
+```
+git clone https://github.com/Web3Hackathons/ETHIndia2022.git // in your local repository
+```
+```
+// running backend
+cd Server
+npm i
+npm run start // please note that you will need environment variables. Reach out to us for accessing the same
+```
+```
+// running frontend
+cd Dapp 
+npm i
+ionic serve -l
+```
 
 
