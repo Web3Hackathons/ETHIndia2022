@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
-    "build": "react-scripts build"
+    "build": "npm run build"
   },
   "author": "",
   "license": "ISC",
