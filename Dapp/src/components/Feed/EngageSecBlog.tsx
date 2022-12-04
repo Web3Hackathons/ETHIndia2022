@@ -7,7 +7,6 @@ import abi from "../../contract_Interact/ABI";
 import ModalExample from "./TipInBlog";
 
 const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
-  //   console.log("Hello from EngageMenu", card.author.walletAddress);
   const [isLiked, setIsLiked] = useState(false);
   const [activeUser, setActiveUser] = useState("");
   const [presentAlert] = useIonAlert();
@@ -51,7 +50,6 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
 
   const handleTip = async () => {
     const tipInputAmount = Number(TipAmountRef.current?.value) * 1e18;
-    // console.log("Tip amount ==== ", tipInputAmount.toString());
     await Trikl.tip(card.author.walletAddress, {
       value: tipInputAmount.toString(),
     });
@@ -62,7 +60,6 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const accounts = await provider.listAccounts();
       setActiveUser(accounts[0]);
-      console.log("accounts >>> ", accounts[0]);
     };
 
     getaccount();
@@ -72,11 +69,10 @@ const EngageMenu: React.FC<{ card: any }> = ({ card }) => {
         blogCID: card.blogCID,
       })
       .then((res) => {
-        if (res.data.length) {
-          console.log("Res Data liked >>> ", res.data[0].likedUsers);
+        console.log("res>>>>>>>>", res);
 
+        if (res.data.length) {
           res.data[0].likedUsers.map((user: any) => {
-            console.log("Each User Likes >> ", user);
             if (user.walletAddress === activeUser) {
               setIsLiked(true);
             }

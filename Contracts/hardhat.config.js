@@ -16,9 +16,18 @@ module.exports = {
       url: process.env.MUMBAI_ALCHEMY_KEY,
       accounts: [private_keys],
     },
+    liberty: {
+      url: "https://liberty10.shardeum.org/",
+      accounts: [private_keys],
+      chainId: 8080,
+    },
+    goerli: {
+      url: process.env.GOERLI_KEY,
+      accounts: [private_keys],
+    },
   },
   etherscan: {
-    apiKey: process.env.POLYGONSCAN_API_KEY,
+    apiKey: process.env.ETHERSCAN_API_KEY,
   },
   solidity: {
     version: "0.8.14",
@@ -30,3 +39,6 @@ module.exports = {
     },
   },
 };
+
+//Shareduem - 0x1a3739638446A5260eE387E517524888406B3F82
+//Gorli - 0x4AF7785Be2FF025e09E82fAeD8043FE70Ca34de8

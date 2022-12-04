@@ -14,7 +14,6 @@ const EachBlogCard: React.FC = () => {
     axios
       .get("http://localhost:4000/api/blogs/")
       .then((response) => {
-        console.log(">>>>>>>>>", response.data);
         setData(response.data);
       })
       .catch((error) => console.log(error));

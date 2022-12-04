@@ -2,6 +2,7 @@
   "name": "trikl-fe",
   "version": "0.0.1",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@apollo/client": "^3.7.1",
     "@capacitor/android": "4.5.0",
