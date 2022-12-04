@@ -12,12 +12,15 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import abi from "../../contract_Interact/ABI";
+import axios from "axios";
 
 const Leaderboard: React.FC = () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const [creatorsInfo, setCreatorsInfo] = useState<any[]>([]);
+
   const Trikl = new ethers.Contract(
     process.env.REACT_APP_TRIKL_CONTRACT_ADDRESS!,
     // "0x120D092B5B24aE6c1C661b888715f1d62a63B8f0",
@@ -38,49 +41,73 @@ const Leaderboard: React.FC = () => {
     });
   };
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:4000/api/creators")
+      .then((res) => {
+        console.log(res.data);
+        setCreatorsInfo(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <IonPage>
       <IonContent fullscreen>
         <IonGrid>
-          <IonHeader class="ion-text-center ion-padding">Leaderboard</IonHeader>
+          <IonHeader class="ion-text-center ion-padding">
+            <h2 className="text-xl text-lightAccent font-semibold pt-5">
+              Creator Leaderboards
+            </h2>
+          </IonHeader>
 
           <IonList inset={true} lines="inset">
-            {staticDataCommunity.map((eachcreator, index) => (
+            {creatorsInfo.map((eachcreator, index) => (
               <IonItem key={index}>
-                <div className="flex flex-col w-full py-3">
+                <div className="flex flex-col w-full border-b-[1px] pb-10 border-triklGray/20">
                   <IonRow>
-                    <h3 className="font-semibold py-2">
-                      {eachcreator.creatorName}
+                    <h3 className="font-semibold pt-5 justify-center w-full text-center text-lg">
+                      {eachcreator.name}
                     </h3>
                   </IonRow>
 
-                  <IonRow class="ion-no-padding" className="flex gap-5">
-                    <div className="flex gap-1 text-sm items-center">
-                      <span className="text-xs">Points: </span>
-                      <span className="text-lg">
-                        {eachcreator.pointsEarned}
-                      </span>
+                  <IonRow
+                    class="ion-no-padding"
+                    className="flex gap-5 justify-center py-5"
+                  >
+                    <div className="flex gap-2 text-sm items-center">
+                      <span className="text-lg">{eachcreator.nFollowers}</span>
+                      <span className="">Followers</span>
                     </div>
 
                     <div className="flex gap-1 text-sm items-center">
                       <span className="text-xs">Rank: </span>
                       <span className="text-green-600 text-lg">
-                        {eachcreator.userRank}
+                        {Math.round(Math.random() * 10)}/
                       </span>
                       <span>/</span>
                       <span className="text-xs">
-                        {eachcreator.TotalParticipants}
+                        {Math.round(Math.random() * 100)}
                       </span>
                     </div>
                   </IonRow>
+                  <IonRow className="flex gap-5 justify-center">
+                    <IonButton href={"/creator/" + eachcreator.walletAddress}>
+                      View Profile
+                    </IonButton>
+                  </IonRow>
+                  {/* <IonRow className="flex gap-5 justify-center">
+                    <IonButton onClick={handleReward}>Own Pool</IonButton>
+                    <IonButton onClick={handleRewardCreator}>
+                      Sponsor Pool
+                    </IonButton>
+                  </IonRow> */}
                 </div>
-                <div>
-                  <IonButton onClick={handleReward}> Reward Pool</IonButton>
-                  <IonButton onClick={handleRewardCreator}>
-                    {" "}
-                    Creator Reward Pool
-                  </IonButton>
-                </div>
+                {/* <div>
+                 
+                </div> */}
               </IonItem>
             ))}
           </IonList>
@@ -91,42 +118,3 @@ const Leaderboard: React.FC = () => {
 };
 
 export default Leaderboard;
-
-const staticDataCommunity = [
-  {
-    creatorName: "John Crypto",
-    pointsEarned: 43,
-    userRank: 12,
-    TotalParticipants: 232,
-  },
-  {
-    creatorName: "John Crypto",
-    pointsEarned: 43,
-    userRank: 12,
-    TotalParticipants: 232,
-  },
-  {
-    creatorName: "John Crypto",
-    pointsEarned: 43,
-    userRank: 12,
-    TotalParticipants: 232,
-  },
-  {
-    creatorName: "John Crypto",
-    pointsEarned: 43,
-    userRank: 12,
-    TotalParticipants: 232,
-  },
-  {
-    creatorName: "John Crypto",
-    pointsEarned: 43,
-    userRank: 12,
-    TotalParticipants: 232,
-  },
-  {
-    creatorName: "John Crypto",
-    pointsEarned: 43,
-    userRank: 12,
-    TotalParticipants: 232,
-  },
-];
